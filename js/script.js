@@ -1,4 +1,4 @@
-window.addEventListener('DOMContentLoaded', function () {
+window.addEventListener('DOMContentLoaded', () => {
     'use strict';
 
     //TABS
@@ -23,7 +23,7 @@ window.addEventListener('DOMContentLoaded', function () {
             tabContent[b].classList.add('show');
         }
     }
-    info.addEventListener('click', function (event) { // делегирование
+    info.addEventListener('click', (event) => { // делегирование
         let target = event.target;
         if (target && target.classList.contains('info-header-tab')) {
             for (let i = 0; i < tab.length; i++) {
@@ -94,18 +94,18 @@ window.addEventListener('DOMContentLoaded', function () {
         close = document.querySelector('.popup-close'),
         moreDesc = document.querySelectorAll('.description-btn');
     
-    more.addEventListener('click', function () {
+    more.addEventListener('click', () => {
         overlay.style.display = 'block';
         this.classList.add('more-splash');
         document.body.style.overflow = 'hidden'; // заперт прокрутки страницы, когда открыто модальное окно. 
     });
-    close.addEventListener('click', function () {
+    close.addEventListener('click', () => {
         overlay.style.display = 'none';
         more.classList.remove('more-splash');
         document.body.style.overflow = '';
     });
-    moreDesc.forEach(function (item) {
-            item.addEventListener('click', function () {
+    moreDesc.forEach((item) => {
+            item.addEventListener('click', () => {
             overlay.style.display = 'block';
             this.classList.add('more-splash');
             document.body.style.overflow = 'hidden';
