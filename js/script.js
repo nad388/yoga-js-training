@@ -1,5 +1,5 @@
-window.addEventListener('DOMContentLoaded', function () {
-    //'use strict';
+window.addEventListener('DOMContentLoaded', () => {
+    'use strict';
 
     //TABS
 
@@ -105,7 +105,7 @@ window.addEventListener('DOMContentLoaded', function () {
         document.body.style.overflow = '';
     });
     moreDesc.forEach((item) => {
-            item.addEventListener('click', () => {
+            item.addEventListener('click', function() {
             overlay.style.display = 'block';
             this.classList.add('more-splash');
             document.body.style.overflow = 'hidden';
@@ -120,79 +120,45 @@ window.addEventListener('DOMContentLoaded', function () {
         failure: 'Что-то пошло не так...'
     };
 
-    let form = document.querySelector('.main-form'),
-        form2 = document.querySelector('#form'),
-        input2 = form2.getElementsByTagName('input'),
-        input = form.getElementsByTagName('input'), // получаем все импуты из формы
+    let forms = document.querySelectorAll('form'),
+        input = document.getElementsByTagName('input'), // получаем все импуты из формы
         statusMessage = document.createElement('div');
     
-        statusMessage.classList.add('status');
+    statusMessage.classList.add('status');
+    
+    forms.forEach((item) => {
+        item.addEventListener('submit', function (event) {
+            event.preventDefault();
+            item.appendChild(statusMessage);
 
-    form.addEventListener('submit', function (event) {
-        event.preventDefault();
-        form.appendChild(statusMessage);
+            let request = new XMLHttpRequest();
+            request.open('POST', 'server.php');
+            request.setRequestHeader('Content-type', 'application/json; charset=utf-8');
 
-        request = new XMLHttpRequest();
-        request.open('POST', 'server.php');
-        request.setRequestHeader('Content-type', 'application/json; charset=utf-8');
+            let formData = new FormData(item);
 
-        let formData = new FormData(form);
+            let obj = {}
+            formData.forEach(function (value, key) {
+                obj[key] = value;
+            });
 
-        let obj = {}
-        formData.forEach(function (value, key) {
-            obj[key] = value;
-        });
+            let json = JSON.stringify(obj);
 
-        let json = JSON.stringify(obj);
+            request.send(json);
 
-        request.send(json);
+            request.addEventListener('readystatechange', function () {
+                if (request.readyState < 4) {
+                    statusMessage.innerHTML = message.loading;
+                } else if (request.readyState === 4 && request.status == 200) {
+                    statusMessage.innerHTML = message.success;
+                } else {
+                    statusMessage.innerHTML = message.failure;
+                }
+            });
 
-        request.addEventListener('readystatechange', function () {
-            if (request.readyState < 4) {
-                statusMessage.innerHTML = message.loading;
-            } else if (request.readyState === 4 && request.status == 200) {
-                statusMessage.innerHTML = message.success;
-            } else {
-                statusMessage.innerHTML = message.failure;
+            for (let i = 0; i < input.length; i++) {
+                input[i].value = '';
             }
         });
-
-        for (let i = 0; i < input.length; i++) {
-            input[i].value = '';
-        }
-    });
-
-    form2.addEventListener('submit', function (event) {
-        event.preventDefault();
-        form2.appendChild(statusMessage);
-
-        request = new XMLHttpRequest();
-        request.open('POST', 'server.php');
-        request.setRequestHeader('Content-type', 'application/json; charset=utf-8');
-
-        let formData = new FormData(form2);
-
-        let obj = {}
-        formData.forEach(function (value, key) {
-            obj[key] = value;
-        });
-
-        let json = JSON.stringify(obj);
-
-        request.send(json);
-
-        request.addEventListener('readystatechange', function () {
-            if (request.readyState < 4) {
-                statusMessage.innerHTML = message.loading;
-            } else if (request.readyState === 4 && request.status == 200) {
-                statusMessage.innerHTML = message.success;
-            } else {
-                statusMessage.innerHTML = message.failure;
-            }
-        });
-
-        for (let i = 0; i < input2.length; i++) {
-            input2[i].value = '';
-        }
-    });
+    })
 });
